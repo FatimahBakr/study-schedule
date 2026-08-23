@@ -1028,9 +1028,7 @@ function App() {
 
           </div>
 
-          <p className="mobile-table-note">
-            اسحبي الجدول يمينًا ويسارًا لرؤية باقي الأعمدة 📱
-          </p>
+         
 
         </section>
 
