@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Clock,
   BookOpen,
@@ -10,72 +10,126 @@ import {
   Calendar
 } from 'lucide-react';
 
+const COLORS = [
+  { bg: '#fce4ec', text: '#880e4f' },
+  { bg: '#e8f5e9', text: '#1b5e20' },
+  { bg: '#fffde7', text: '#f57f17' },
+  { bg: '#e1f5fe', text: '#01579b' },
+  { bg: '#f3e5f5', text: '#4a148c' }
+];
+
+const DAYS = [
+  'الأحد',
+  'الإثنين',
+  'الثلاثاء',
+  'الأربعاء',
+  'الخميس'
+];
+
 function App() {
-  // =========================================
-  // 1. حالة جدول المحاضرات
-  // =========================================
+  // ==============================
+  // جدول المواد
+  // ==============================
 
   const [schedule, setSchedule] = useState(() => {
-    const saved = localStorage.getItem('my_study_schedule');
+    try {
+      const saved = localStorage.getItem('my_study_schedule');
 
-    return saved
-      ? JSON.parse(saved)
-      : [
-          {
-            id: 1,
-            day: 'الأحد',
-            time: '08:00 ص - 10:00 ص',
-            subject: 'برمجة ويب',
-            instructor: 'د. سارة',
-            room: 'Lab 3',
-            bg: '#fce4ec',
-            text: '#880e4f'
-          },
-          {
-            id: 2,
-            day: 'الأحد',
-            time: '10:00 ص - 12:00 م',
-            subject: 'قواعد بيانات',
-            instructor: 'د. خالد',
-            room: 'Hall B',
-            bg: '#e8f5e9',
-            text: '#1b5e20'
-          }
-        ];
+      return saved
+        ? JSON.parse(saved)
+        : [
+            {
+              id: 1,
+              day: 'الأحد',
+              time: '08:00 ص - 10:00 ص',
+              subject: 'برمجة ويب',
+              instructor: 'د. سارة',
+              room: 'Lab 3',
+              bg: '#fce4ec',
+              text: '#880e4f'
+            },
+            {
+              id: 2,
+              day: 'الأحد',
+              time: '10:00 ص - 12:00 م',
+              subject: 'قواعد بيانات',
+              instructor: 'د. خالد',
+              room: 'Hall B',
+              bg: '#e8f5e9',
+              text: '#1b5e20'
+            }
+          ];
+    } catch {
+      return [];
+    }
   });
 
-  // =========================================
-  // 2. حالة التكليفات والاختبارات
-  // =========================================
+  // ==============================
+  // المهام والاختبارات
+  // ==============================
 
   const [tasks, setTasks] = useState(() => {
-    const savedTasks = localStorage.getItem('my_study_tasks');
+    try {
+      const saved = localStorage.getItem('my_study_tasks');
 
-    return savedTasks
-      ? JSON.parse(savedTasks)
-      : [
-          {
-            id: 1,
-            title: 'مشروع النصفي',
-            subject: 'برمجة ويب',
-            date: '2026-09-10',
-            type: 'مشروع',
-            completed: false
-          },
-          {
-            id: 2,
-            title: 'كويز الفصل الأول',
-            subject: 'قواعد بيانات',
-            date: '2026-09-02',
-            type: 'اختبار',
-            completed: false
-          }
-        ];
+      return saved
+        ? JSON.parse(saved)
+        : [
+            {
+              id: 1,
+              title: 'مشروع النصفي',
+              subject: 'برمجة ويب',
+              date: '2026-09-10',
+              type: 'مشروع',
+              completed: false
+            },
+            {
+              id: 2,
+              title: 'كويز الفصل الأول',
+              subject: 'قواعد بيانات',
+              date: '2026-09-02',
+              type: 'اختبار',
+              completed: false
+            }
+          ];
+    } catch {
+      return [];
+    }
   });
 
-  // =========================================
-  // 3. الحفظ التلقائي
-  // =========================================
+  // ==============================
+  // النوافذ
+  // ==============================
+
+  const [showModal, setShowModal] = useState(false);
+  const [showTaskModal, setShowTaskModal] = useState(false);
+
+  // ==============================
+  // بيانات المادة الجديدة
+  // ==============================
+
+  const [newSubject, setNewSubject] = useState({
+    day: 'الأحد',
+    time: '',
+    subject: '',
+    instructor: '',
+    room: ''
+  });
+
+  // ==============================
+  // بيانات المهمة الجديدة
+  // ==============================
+
+  const [newTask, setNewTask] = useState({
+    title: '',
+    subject: '',
+    date: '',
+    type: 'واجب'
+  });
+
+  // ==============================
+  // حفظ تلقائي
+  // ==============================
 
   useEffect(() => {
     localStorage.setItem(
@@ -91,64 +145,32 @@ function App() {
     );
   }, [tasks]);
 
-  // =========================================
-  // 4. النوافذ والمدخلات
-  // =========================================
-
-  const [showModal, setShowModal] = useState(false);
-  const [showTaskModal, setShowTaskModal] = useState(false);
-
-  const [newSubject, setNewSubject] = useState({
-    day: 'الأحد',
-    time: '',
-    subject: '',
-    instructor: '',
-    room: ''
-  });
-
-  const [newTask, setNewTask] = useState({
-    title: '',
-    subject: '',
-    date: '',
-    type: 'واجب'
-  });
-
-  // =========================================
-  // 5. ألوان المواد
-  // =========================================
-
-  const colors = [
-    { bg: '#fce4ec', text: '#880e4f' },
-    { bg: '#e8f5e9', text: '#1b5e20' },
-    { bg: '#fffde7', text: '#f57f17' },
-    { bg: '#e1f5fe', text: '#01579b' },
-    { bg: '#f3e5f5', text: '#4a148c' }
-  ];
-
-  // =========================================
-  // 6. إضافة مادة
-  // =========================================
+  // ==============================
+  // إضافة مادة
+  // ==============================
 
   const handleAddSubject = (e) => {
     e.preventDefault();
 
-    if (!newSubject.subject || !newSubject.time) {
+    if (!newSubject.subject.trim() || !newSubject.time.trim()) {
       return;
     }
 
     const randomColor =
-      colors[Math.floor(Math.random() * colors.length)];
+      COLORS[Math.floor(Math.random() * COLORS.length)];
 
     const newItem = {
       id: Date.now(),
-      ...newSubject,
+      day: newSubject.day,
+      time: newSubject.time.trim(),
+      subject: newSubject.subject.trim(),
+      instructor: newSubject.instructor.trim(),
+      room: newSubject.room.trim(),
       bg: randomColor.bg,
       text: randomColor.text
     };
 
     setSchedule((prev) => [...prev, newItem]);
-
-    setShowModal(false);
 
     setNewSubject({
       day: 'الأحد',
@@ -157,28 +179,31 @@ function App() {
       instructor: '',
       room: ''
     });
+
+    setShowModal(false);
   };
 
-  // =========================================
-  // 7. إضافة اختبار / تكليف
-  // =========================================
+  // ==============================
+  // إضافة مهمة
+  // ==============================
 
   const handleAddTask = (e) => {
     e.preventDefault();
 
-    if (!newTask.title || !newTask.date) {
+    if (!newTask.title.trim() || !newTask.date) {
       return;
     }
 
-    const item = {
+    const newItem = {
       id: Date.now(),
-      ...newTask,
+      title: newTask.title.trim(),
+      subject: newTask.subject.trim(),
+      date: newTask.date,
+      type: newTask.type,
       completed: false
     };
 
-    setTasks((prev) => [...prev, item]);
-
-    setShowTaskModal(false);
+    setTasks((prev) => [...prev, newItem]);
 
     setNewTask({
       title: '',
@@ -186,11 +211,33 @@ function App() {
       date: '',
       type: 'واجب'
     });
+
+    setShowTaskModal(false);
   };
 
-  // =========================================
-  // 8. تغيير حالة المهمة
-  // =========================================
+  // ==============================
+  // حذف مادة
+  // ==============================
+
+  const deleteSubject = (id) => {
+    setSchedule((prev) =>
+      prev.filter((item) => item.id !== id)
+    );
+  };
+
+  // ==============================
+  // حذف مهمة
+  // ==============================
+
+  const deleteTask = (id) => {
+    setTasks((prev) =>
+      prev.filter((task) => task.id !== id)
+    );
+  };
+
+  // ==============================
+  // تغيير حالة المهمة
+  // ==============================
 
   const toggleTaskStatus = (id) => {
     setTasks((prev) =>
@@ -205,46 +252,29 @@ function App() {
     );
   };
 
-  // =========================================
-  // 9. حذف مادة
-  // =========================================
-
-  const deleteSubject = (id) => {
-    setSchedule((prev) =>
-      prev.filter((item) => item.id !== id)
-    );
-  };
-
-  // =========================================
-  // 10. حذف مهمة
-  // =========================================
-
-  const deleteTask = (id) => {
-    setTasks((prev) =>
-      prev.filter((task) => task.id !== id)
-    );
-  };
-
-  // =========================================
-  // الواجهة
-  // =========================================
+  const upcomingTasks = tasks.filter(
+    (task) => !task.completed
+  ).length;
 
   return (
     <>
-      {/* ================================
-          Responsive CSS
-      ================================= */}
-
       <style>{`
+
         * {
           box-sizing: border-box;
         }
 
+        html {
+          width: 100%;
+          overflow-x: hidden;
+        }
+
         body {
           margin: 0;
-          padding: 0;
+          width: 100%;
+          min-width: 0;
           background: #faf7f5;
-          font-family: sans-serif;
+          font-family: Arial, sans-serif;
         }
 
         button,
@@ -257,7 +287,11 @@ function App() {
           -webkit-tap-highlight-color: transparent;
         }
 
-        .app-container {
+        /* ==========================
+           الصفحة الرئيسية
+        ========================== */
+
+        .app {
           width: 100%;
           min-height: 100vh;
           padding: 30px;
@@ -265,7 +299,12 @@ function App() {
           direction: rtl;
         }
 
-        .top-header {
+        /* ==========================
+           Header
+        ========================== */
+
+        .header {
+          width: 100%;
           display: flex;
           justify-content: space-between;
           align-items: center;
@@ -273,14 +312,22 @@ function App() {
           margin-bottom: 30px;
         }
 
+        .header-title {
+          margin: 0;
+          color: #4a4e69;
+          font-size: 32px;
+          line-height: 1.3;
+        }
+
         .header-buttons {
           display: flex;
-          gap: 10px;
           flex-wrap: wrap;
+          gap: 10px;
         }
 
         .header-button {
           border: none;
+          min-height: 44px;
           padding: 10px 18px;
           border-radius: 12px;
           font-weight: bold;
@@ -289,41 +336,76 @@ function App() {
           align-items: center;
           justify-content: center;
           gap: 6px;
-          min-height: 44px;
+          white-space: nowrap;
         }
 
+        /* ==========================
+           بطاقات الملخص
+        ========================== */
+
         .summary-grid {
+          width: 100%;
           display: grid;
           grid-template-columns: repeat(
-            auto-fit,
-            minmax(180px, 1fr)
+            3,
+            minmax(0, 1fr)
           );
           gap: 20px;
           margin-bottom: 30px;
         }
 
         .summary-card {
+          min-width: 0;
           background: #ffffff;
           padding: 20px;
           border-radius: 16px;
-          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
-          min-width: 0;
+          box-shadow:
+            0 4px 12px rgba(0, 0, 0, 0.03);
         }
 
-        .section-card {
+        .summary-title {
+          margin: 10px 0 5px;
+          color: #4a4e69;
+          font-size: 18px;
+        }
+
+        .summary-text {
+          color: #a5a58d;
+          font-size: 14px;
+        }
+
+        /* ==========================
+           الأقسام
+        ========================== */
+
+        .section {
           width: 100%;
+          min-width: 0;
           background: #ffffff;
           padding: 25px;
           border-radius: 20px;
-          box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+          box-shadow:
+            0 4px 15px rgba(0, 0, 0, 0.03);
           margin-bottom: 30px;
         }
 
-        .table-wrapper {
+        .section-title {
+          margin: 0 0 20px;
+          color: #4a4e69;
+          font-size: 20px;
+        }
+
+        /* ==========================
+           الجدول
+        ========================== */
+
+        .table-scroll {
           width: 100%;
+          max-width: 100%;
           overflow-x: auto;
           overflow-y: hidden;
           -webkit-overflow-scrolling: touch;
+          overscroll-behavior-x: contain;
           border-radius: 12px;
         }
 
@@ -332,31 +414,37 @@ function App() {
           min-width: 760px;
           border-collapse: collapse;
           text-align: right;
+          table-layout: auto;
         }
 
         .schedule-table th,
         .schedule-table td {
           white-space: nowrap;
+          vertical-align: middle;
         }
 
         .schedule-table th {
           padding: 12px;
+          color: #a5a58d;
+          font-size: 14px;
+          border-bottom: 2px solid #f0f0f0;
         }
 
         .schedule-table td {
           padding: 16px 12px;
+          border-bottom: 1px solid #f8f9fa;
         }
 
         .subject-badge {
           display: inline-block;
+          white-space: nowrap;
           padding: 6px 14px;
           border-radius: 20px;
           font-weight: bold;
           font-size: 14px;
-          white-space: nowrap;
         }
 
-        .instructor-cell {
+        .instructor {
           display: flex;
           align-items: center;
           gap: 6px;
@@ -364,44 +452,59 @@ function App() {
         }
 
         .delete-button {
-          width: 40px;
-          height: 40px;
+          width: 42px;
+          height: 42px;
+          padding: 0;
           border: none;
-          background: transparent;
           border-radius: 10px;
-          display: flex;
+          background: transparent;
+          display: inline-flex;
           align-items: center;
           justify-content: center;
           cursor: pointer;
           touch-action: manipulation;
         }
 
-        .delete-button:hover {
-          background: #fff1f1;
+        .delete-button:active {
+          background: #fff0f0;
+          transform: scale(0.95);
         }
 
-        .tasks-container {
+        .mobile-table-note {
+          display: none;
+          margin: 12px 0 0;
+          text-align: center;
+          color: #adb5bd;
+          font-size: 12px;
+        }
+
+        /* ==========================
+           المهام
+        ========================== */
+
+        .tasks {
           display: flex;
           flex-direction: column;
           gap: 12px;
         }
 
-        .task-item {
+        .task {
+          width: 100%;
+          min-width: 0;
           display: flex;
           justify-content: space-between;
           align-items: center;
           gap: 15px;
           padding: 14px 18px;
           border-radius: 14px;
-          min-width: 0;
         }
 
         .task-main {
+          min-width: 0;
+          flex: 1;
           display: flex;
           align-items: center;
           gap: 12px;
-          min-width: 0;
-          flex: 1;
         }
 
         .task-info {
@@ -412,12 +515,15 @@ function App() {
           margin: 0;
           color: #4a4e69;
           font-size: 16px;
+          line-height: 1.5;
           overflow-wrap: anywhere;
         }
 
         .task-details {
-          font-size: 13px;
+          display: block;
           color: #8d99ae;
+          font-size: 13px;
+          line-height: 1.6;
           overflow-wrap: anywhere;
         }
 
@@ -429,32 +535,36 @@ function App() {
         }
 
         .task-type {
+          white-space: nowrap;
           padding: 4px 12px;
           border-radius: 12px;
           font-size: 12px;
           font-weight: bold;
-          white-space: nowrap;
         }
+
+        /* ==========================
+           النوافذ المنبثقة
+        ========================== */
 
         .modal-overlay {
           position: fixed;
           inset: 0;
+          z-index: 1000;
+          padding: 20px;
           background: rgba(0, 0, 0, 0.3);
           display: flex;
           justify-content: center;
           align-items: center;
-          z-index: 1000;
-          padding: 20px;
           overflow-y: auto;
         }
 
         .modal {
-          background: #ffffff;
-          padding: 30px;
-          border-radius: 20px;
           width: min(400px, 100%);
           max-height: calc(100vh - 40px);
           overflow-y: auto;
+          background: #ffffff;
+          padding: 30px;
+          border-radius: 20px;
         }
 
         .modal-header {
@@ -472,11 +582,11 @@ function App() {
         }
 
         .close-button {
+          flex-shrink: 0;
           border: none;
           background: transparent;
-          cursor: pointer;
           padding: 6px;
-          flex-shrink: 0;
+          cursor: pointer;
         }
 
         .form {
@@ -487,83 +597,87 @@ function App() {
 
         .form-label {
           display: block;
-          font-size: 14px;
-          color: #6c757d;
           margin-bottom: 5px;
+          color: #6c757d;
+          font-size: 14px;
         }
 
         .form-input,
         .form-select {
           width: 100%;
+          min-width: 0;
           padding: 11px;
-          border-radius: 10px;
           border: 1px solid #e0e0e0;
+          border-radius: 10px;
           outline: none;
+          background: #ffffff;
           font-size: 16px;
-          background: #fff;
         }
 
         .form-input:focus,
         .form-select:focus {
-          border-color: #b5e2fa;
+          border-color: #a8e0ff;
         }
 
         .submit-button {
+          width: 100%;
+          min-height: 46px;
           border: none;
-          padding: 12px;
           border-radius: 10px;
           font-weight: bold;
-          cursor: pointer;
-          min-height: 46px;
           font-size: 15px;
+          cursor: pointer;
         }
 
-        /* ================================
+        /* ==========================
            Tablet
-        ================================= */
+        ========================== */
 
         @media (max-width: 900px) {
-          .app-container {
+
+          .app {
             padding: 20px;
           }
 
-          .top-header {
+          .header {
             align-items: flex-start;
-          }
-
-          .section-card {
-            padding: 20px;
           }
 
           .summary-grid {
             gap: 15px;
           }
+
+          .section {
+            padding: 20px;
+          }
+
         }
 
-        /* ================================
-           Mobile
-        ================================= */
+        /* ==========================
+           الجوال
+        ========================== */
 
         @media (max-width: 600px) {
-          .app-container {
+
+          .app {
             padding: 12px;
           }
 
-          .top-header {
+          .header {
             flex-direction: column;
             align-items: stretch;
             gap: 15px;
             margin-bottom: 20px;
           }
 
-          .top-header h1 {
-            font-size: 25px !important;
+          .header-title {
+            font-size: 25px;
           }
 
           .header-buttons {
+            width: 100%;
             display: grid;
             grid-template-columns: 1fr;
-            width: 100%;
           }
 
           .header-button {
@@ -580,71 +694,78 @@ function App() {
             padding: 16px;
           }
 
-          .section-card {
+          .section {
             padding: 15px;
-            border-radius: 16px;
             margin-bottom: 20px;
+            border-radius: 16px;
           }
 
-          .section-card h2 {
-            font-size: 18px !important;
+          .section-title {
+            font-size: 18px;
           }
 
-          .table-wrapper {
-            margin-top: 5px;
-          }
+          /*
+             الجدول لا ينضغط على الجوال.
+             يبقى بعرضه الطبيعي ويمكن سحبه.
+          */
 
           .schedule-table {
             min-width: 760px;
           }
 
-          .schedule-table th {
-            padding: 11px 10px;
-          }
-
+          .schedule-table th,
           .schedule-table td {
-            padding: 14px 10px;
+            padding: 13px 10px;
           }
 
-          .task-item {
+          .mobile-table-note {
+            display: block;
+          }
+
+          /* المهام */
+
+          .task {
             flex-direction: column;
             align-items: stretch;
+            gap: 12px;
             padding: 14px;
           }
 
           .task-actions {
             width: 100%;
             justify-content: space-between;
-            padding-right: 34px;
           }
+
+          /* Modal */
 
           .modal-overlay {
             padding: 12px;
-            align-items: center;
           }
 
           .modal {
-            padding: 20px;
-            border-radius: 18px;
             width: 100%;
             max-height: calc(100vh - 24px);
+            padding: 20px;
+            border-radius: 18px;
           }
 
           .modal-title {
             font-size: 18px;
           }
+
         }
 
-        /* ================================
-           Small phones
-        ================================= */
+        /* ==========================
+           الجوالات الصغيرة جدًا
+        ========================== */
 
         @media (max-width: 380px) {
-          .app-container {
+
+          .app {
             padding: 8px;
           }
 
-          .section-card {
+          .section {
             padding: 12px;
           }
 
@@ -655,54 +776,46 @@ function App() {
           .modal {
             padding: 16px;
           }
+
         }
+
       `}</style>
 
-      {/* ================================
-          التطبيق
-      ================================= */}
+      <main className="app">
 
-      <div className="app-container">
+        {/* ==========================
+            Header
+        ========================== */}
 
-        {/* ================================
-            الترويسة
-        ================================= */}
+        <header className="header">
 
-        <header className="top-header">
-
-          <div>
-            <h1
-              style={{
-                color: '#4a4e69',
-                margin: 0,
-                fontSize: '32px'
-              }}
-            >
-              الجدول الدراسي 👩‍💻
-            </h1>
-          </div>
+          <h1 className="header-title">
+            الجدول الدراسي 👩‍💻
+          </h1>
 
           <div className="header-buttons">
 
             <button
-              onClick={() => setShowModal(true)}
+              type="button"
               className="header-button"
               style={{
                 backgroundColor: '#a8e0ff',
                 color: '#1d3557'
               }}
+              onClick={() => setShowModal(true)}
             >
               <Plus size={18} />
               إضافة مادة
             </button>
 
             <button
-              onClick={() => setShowTaskModal(true)}
+              type="button"
               className="header-button"
               style={{
                 backgroundColor: '#ed5a39',
-                color: '#fff'
+                color: '#ffffff'
               }}
+              onClick={() => setShowTaskModal(true)}
             >
               <Plus size={18} />
               إضافة اختبار/تطبيق
@@ -712,205 +825,202 @@ function App() {
 
         </header>
 
-        {/* ================================
-            بطاقات الملخص
-        ================================= */}
+        {/* ==========================
+            Summary
+        ========================== */}
 
-        <div className="summary-grid">
+        <section className="summary-grid">
 
           <div className="summary-card">
-            <BookOpen color="#edafb8" size={28} />
 
-            <h3
-              style={{
-                margin: '10px 0 5px',
-                color: '#4a4e69'
-              }}
-            >
+            <BookOpen
+              color="#edafb8"
+              size={28}
+            />
+
+            <h3 className="summary-title">
               {schedule.length} مواد
             </h3>
 
-            <span
-              style={{
-                color: '#a5a58d',
-                fontSize: '14px'
-              }}
-            >
+            <span className="summary-text">
               المسجلة في الجدول
             </span>
+
           </div>
 
           <div className="summary-card">
-            <Clock color="#f8ad9d" size={28} />
 
-            <h3
-              style={{
-                margin: '10px 0 5px',
-                color: '#4a4e69'
-              }}
-            >
+            <Clock
+              color="#f8ad9d"
+              size={28}
+            />
+
+            <h3 className="summary-title">
               {schedule.length * 3} ساعات
             </h3>
 
-            <span
-              style={{
-                color: '#a5a58d',
-                fontSize: '14px'
-              }}
-            >
+            <span className="summary-text">
               إجمالي الساعات التقديرية
             </span>
+
           </div>
 
           <div className="summary-card">
-            <Calendar color="#aadbf5" size={28} />
 
-            <h3
-              style={{
-                margin: '10px 0 5px',
-                color: '#4a4e69'
-              }}
-            >
-              {tasks.filter((task) => !task.completed).length} مهام قادمة
+            <Calendar
+              color="#aadbf5"
+              size={28}
+            />
+
+            <h3 className="summary-title">
+              {upcomingTasks} مهام قادمة
             </h3>
 
-            <span
-              style={{
-                color: '#a5a58d',
-                fontSize: '14px'
-              }}
-            >
+            <span className="summary-text">
               اختبارات وتكليفات قريبة
             </span>
+
           </div>
 
-        </div>
+        </section>
 
-        {/* ================================
-            جدول المحاضرات
-        ================================= */}
+        {/* ==========================
+            جدول الأسبوع
+        ========================== */}
 
-        <div className="section-card">
+        <section className="section">
 
-          <h2
-            style={{
-              color: '#4a4e69',
-              marginBottom: '20px',
-              fontSize: '20px'
-            }}
-          >
+          <h2 className="section-title">
             جدول الأسبوع
           </h2>
 
-          <div className="table-wrapper">
+          <div className="table-scroll">
 
             <table className="schedule-table">
 
               <thead>
-                <tr
-                  style={{
-                    borderBottom: '2px solid #f0f0f0',
-                    color: '#a5a58d'
-                  }}
-                >
+
+                <tr>
+
                   <th>اليوم</th>
                   <th>الوقت</th>
                   <th>المادة</th>
                   <th>الدكتور/ة</th>
                   <th>القاعة</th>
                   <th>حذف</th>
+
                 </tr>
+
               </thead>
 
               <tbody>
 
-                {schedule.map((item) => (
+                {schedule.length === 0 ? (
 
-                  <tr
-                    key={item.id}
-                    style={{
-                      borderBottom: '1px solid #f8f9fa'
-                    }}
-                  >
+                  <tr>
 
                     <td
+                      colSpan="6"
                       style={{
-                        fontWeight: 'bold',
-                        color: '#6c757d'
+                        textAlign: 'center',
+                        color: '#a5a58d',
+                        padding: '30px'
                       }}
                     >
-                      {item.day}
-                    </td>
-
-                    <td
-                      style={{
-                        color: '#6c757d'
-                      }}
-                    >
-                      {item.time}
-                    </td>
-
-                    <td>
-
-                      <span
-                        className="subject-badge"
-                        style={{
-                          backgroundColor: item.bg,
-                          color: item.text
-                        }}
-                      >
-                        {item.subject}
-                      </span>
-
-                    </td>
-
-                    <td
-                      style={{
-                        color: '#495057'
-                      }}
-                    >
-
-                      <span className="instructor-cell">
-
-                        <User
-                          size={16}
-                          color="#adb5bd"
-                        />
-
-                        {item.instructor || 'غير محدد'}
-
-                      </span>
-
-                    </td>
-
-                    <td
-                      style={{
-                        color: '#6c757d'
-                      }}
-                    >
-                      {item.room || '-'}
-                    </td>
-
-                    <td>
-
-                      <button
-                        className="delete-button"
-                        onClick={() =>
-                          deleteSubject(item.id)
-                        }
-                        aria-label="حذف المادة"
-                      >
-                        <Trash2
-                          size={18}
-                          color="#e57373"
-                        />
-                      </button>
-
+                      لا توجد مواد مضافة حاليًا.
                     </td>
 
                   </tr>
 
-                ))}
+                ) : (
+
+                  schedule.map((item) => (
+
+                    <tr key={item.id}>
+
+                      <td
+                        style={{
+                          fontWeight: 'bold',
+                          color: '#6c757d'
+                        }}
+                      >
+                        {item.day}
+                      </td>
+
+                      <td
+                        style={{
+                          color: '#6c757d'
+                        }}
+                      >
+                        {item.time}
+                      </td>
+
+                      <td>
+
+                        <span
+                          className="subject-badge"
+                          style={{
+                            backgroundColor: item.bg,
+                            color: item.text
+                          }}
+                        >
+                          {item.subject}
+                        </span>
+
+                      </td>
+
+                      <td
+                        style={{
+                          color: '#495057'
+                        }}
+                      >
+
+                        <span className="instructor">
+
+                          <User
+                            size={16}
+                            color="#adb5bd"
+                          />
+
+                          {item.instructor ||
+                            'غير محدد'}
+
+                        </span>
+
+                      </td>
+
+                      <td
+                        style={{
+                          color: '#6c757d'
+                        }}
+                      >
+                        {item.room || '-'}
+                      </td>
+
+                      <td>
+
+                        <button
+                          type="button"
+                          className="delete-button"
+                          onClick={() =>
+                            deleteSubject(item.id)
+                          }
+                          aria-label={`حذف ${item.subject}`}
+                          title="حذف المادة"
+                        >
+                          <Trash2
+                            size={19}
+                            color="#e57373"
+                          />
+                        </button>
+
+                      </td>
+
+                    </tr>
+
+                  ))
+
+                )}
 
               </tbody>
 
@@ -918,47 +1028,33 @@ function App() {
 
           </div>
 
-          {/* ملاحظة للجوال */}
-
-          <p
-            style={{
-              margin: '12px 0 0',
-              color: '#adb5bd',
-              fontSize: '12px',
-              textAlign: 'center'
-            }}
-          >
+          <p className="mobile-table-note">
             اسحبي الجدول يمينًا ويسارًا لرؤية باقي الأعمدة 📱
           </p>
 
-        </div>
+        </section>
 
-        {/* ================================
-            الاختبارات والتكليفات
-        ================================= */}
+        {/* ==========================
+            المهام
+        ========================== */}
 
-        <div className="section-card">
+        <section className="section">
 
-          <h2
-            style={{
-              color: '#4a4e69',
-              marginBottom: '20px',
-              fontSize: '20px'
-            }}
-          >
+          <h2 className="section-title">
             مواعيد الاختبارات والتكليفات القادمة 🎯
           </h2>
 
-          <div className="tasks-container">
+          <div className="tasks">
 
             {tasks.length === 0 ? (
 
               <p
                 style={{
-                  color: '#a5a58d'
+                  color: '#a5a58d',
+                  margin: 0
                 }}
               >
-                لا توجد اختبارات أو تكليفات مضافة حالياً.
+                لا توجد اختبارات أو تكليفات مضافة حاليًا.
               </p>
 
             ) : (
@@ -967,23 +1063,24 @@ function App() {
 
                 <div
                   key={task.id}
-                  className="task-item"
+                  className="task"
                   style={{
                     backgroundColor: task.completed
                       ? '#f8f9fa'
                       : '#fff5f5',
 
-                    borderRight: `5px solid ${
+                    borderRight:
                       task.type === 'اختبار'
-                        ? '#f8ad9d'
-                        : '#b5e2fa'
-                    }`,
+                        ? '5px solid #f8ad9d'
+                        : '5px solid #b5e2fa',
 
                     textDecoration: task.completed
                       ? 'line-through'
                       : 'none',
 
-                    opacity: task.completed ? 0.6 : 1
+                    opacity: task.completed
+                      ? 0.6
+                      : 1
                   }}
                 >
 
@@ -994,7 +1091,7 @@ function App() {
                       color={
                         task.completed
                           ? '#66bb6a'
-                          : '#ccc'
+                          : '#cccccc'
                       }
                       style={{
                         cursor: 'pointer',
@@ -1045,14 +1142,16 @@ function App() {
                     </span>
 
                     <button
+                      type="button"
                       className="delete-button"
                       onClick={() =>
                         deleteTask(task.id)
                       }
-                      aria-label="حذف المهمة"
+                      aria-label={`حذف ${task.title}`}
+                      title="حذف المهمة"
                     >
                       <Trash2
-                        size={18}
+                        size={19}
                         color="#e57373"
                       />
                     </button>
@@ -1067,11 +1166,11 @@ function App() {
 
           </div>
 
-        </div>
+        </section>
 
-        {/* ================================
-            نافذة إضافة مادة
-        ================================= */}
+        {/* ==========================
+            Modal: إضافة مادة
+        ========================== */}
 
         {showModal && (
 
@@ -1086,8 +1185,11 @@ function App() {
                 </h3>
 
                 <button
+                  type="button"
                   className="close-button"
-                  onClick={() => setShowModal(false)}
+                  onClick={() =>
+                    setShowModal(false)
+                  }
                   aria-label="إغلاق"
                 >
                   <X
@@ -1099,11 +1201,9 @@ function App() {
               </div>
 
               <form
-                onSubmit={handleAddSubject}
                 className="form"
+                onSubmit={handleAddSubject}
               >
-
-                {/* اليوم */}
 
                 <div>
 
@@ -1112,41 +1212,28 @@ function App() {
                   </label>
 
                   <select
+                    className="form-select"
                     value={newSubject.day}
                     onChange={(e) =>
-                      setNewSubject({
-                        ...newSubject,
+                      setNewSubject((prev) => ({
+                        ...prev,
                         day: e.target.value
-                      })
+                      }))
                     }
-                    className="form-select"
                   >
 
-                    <option value="الأحد">
-                      الأحد
-                    </option>
-
-                    <option value="الإثنين">
-                      الإثنين
-                    </option>
-
-                    <option value="الثلاثاء">
-                      الثلاثاء
-                    </option>
-
-                    <option value="الأربعاء">
-                      الأربعاء
-                    </option>
-
-                    <option value="الخميس">
-                      الخميس
-                    </option>
+                    {DAYS.map((day) => (
+                      <option
+                        key={day}
+                        value={day}
+                      >
+                        {day}
+                      </option>
+                    ))}
 
                   </select>
 
                 </div>
-
-                {/* اسم المادة */}
 
                 <div>
 
@@ -1155,22 +1242,20 @@ function App() {
                   </label>
 
                   <input
+                    className="form-input"
                     type="text"
                     placeholder="مثال: ذكاء اصطناعي"
                     value={newSubject.subject}
                     onChange={(e) =>
-                      setNewSubject({
-                        ...newSubject,
+                      setNewSubject((prev) => ({
+                        ...prev,
                         subject: e.target.value
-                      })
+                      }))
                     }
-                    className="form-input"
                     required
                   />
 
                 </div>
-
-                {/* الوقت */}
 
                 <div>
 
@@ -1179,22 +1264,20 @@ function App() {
                   </label>
 
                   <input
+                    className="form-input"
                     type="text"
                     placeholder="مثال: 08:00 ص - 10:00 ص"
                     value={newSubject.time}
                     onChange={(e) =>
-                      setNewSubject({
-                        ...newSubject,
+                      setNewSubject((prev) => ({
+                        ...prev,
                         time: e.target.value
-                      })
+                      }))
                     }
-                    className="form-input"
                     required
                   />
 
                 </div>
-
-                {/* الدكتور */}
 
                 <div>
 
@@ -1203,21 +1286,19 @@ function App() {
                   </label>
 
                   <input
+                    className="form-input"
                     type="text"
                     placeholder="مثال: د. أحمد"
                     value={newSubject.instructor}
                     onChange={(e) =>
-                      setNewSubject({
-                        ...newSubject,
+                      setNewSubject((prev) => ({
+                        ...prev,
                         instructor: e.target.value
-                      })
+                      }))
                     }
-                    className="form-input"
                   />
 
                 </div>
-
-                {/* القاعة */}
 
                 <div>
 
@@ -1226,26 +1307,26 @@ function App() {
                   </label>
 
                   <input
+                    className="form-input"
                     type="text"
                     placeholder="مثال: Lab 2"
                     value={newSubject.room}
                     onChange={(e) =>
-                      setNewSubject({
-                        ...newSubject,
+                      setNewSubject((prev) => ({
+                        ...prev,
                         room: e.target.value
-                      })
+                      }))
                     }
-                    className="form-input"
                   />
 
                 </div>
 
                 <button
-                  type="submit"
                   className="submit-button"
+                  type="submit"
                   style={{
                     backgroundColor: '#f8ad9d',
-                    color: '#fff'
+                    color: '#ffffff'
                   }}
                 >
                   حفظ المادة
@@ -1259,9 +1340,9 @@ function App() {
 
         )}
 
-        {/* ================================
-            نافذة إضافة اختبار / تكليف
-        ================================= */}
+        {/* ==========================
+            Modal: إضافة اختبار
+        ========================== */}
 
         {showTaskModal && (
 
@@ -1276,6 +1357,7 @@ function App() {
                 </h3>
 
                 <button
+                  type="button"
                   className="close-button"
                   onClick={() =>
                     setShowTaskModal(false)
@@ -1291,11 +1373,9 @@ function App() {
               </div>
 
               <form
-                onSubmit={handleAddTask}
                 className="form"
+                onSubmit={handleAddTask}
               >
-
-                {/* العنوان */}
 
                 <div>
 
@@ -1304,22 +1384,20 @@ function App() {
                   </label>
 
                   <input
+                    className="form-input"
                     type="text"
                     placeholder="مثال: كويز الفصل الأول"
                     value={newTask.title}
                     onChange={(e) =>
-                      setNewTask({
-                        ...newTask,
+                      setNewTask((prev) => ({
+                        ...prev,
                         title: e.target.value
-                      })
+                      }))
                     }
-                    className="form-input"
                     required
                   />
 
                 </div>
-
-                {/* المادة */}
 
                 <div>
 
@@ -1328,21 +1406,19 @@ function App() {
                   </label>
 
                   <input
+                    className="form-input"
                     type="text"
                     placeholder="مثال: قواعد بيانات"
                     value={newTask.subject}
                     onChange={(e) =>
-                      setNewTask({
-                        ...newTask,
+                      setNewTask((prev) => ({
+                        ...prev,
                         subject: e.target.value
-                      })
+                      }))
                     }
-                    className="form-input"
                   />
 
                 </div>
-
-                {/* النوع */}
 
                 <div>
 
@@ -1351,14 +1427,14 @@ function App() {
                   </label>
 
                   <select
+                    className="form-select"
                     value={newTask.type}
                     onChange={(e) =>
-                      setNewTask({
-                        ...newTask,
+                      setNewTask((prev) => ({
+                        ...prev,
                         type: e.target.value
-                      })
+                      }))
                     }
-                    className="form-select"
                   >
 
                     <option value="اختبار">
@@ -1377,8 +1453,6 @@ function App() {
 
                 </div>
 
-                {/* التاريخ */}
-
                 <div>
 
                   <label className="form-label">
@@ -1386,23 +1460,23 @@ function App() {
                   </label>
 
                   <input
+                    className="form-input"
                     type="date"
                     value={newTask.date}
                     onChange={(e) =>
-                      setNewTask({
-                        ...newTask,
+                      setNewTask((prev) => ({
+                        ...prev,
                         date: e.target.value
-                      })
+                      }))
                     }
-                    className="form-input"
                     required
                   />
 
                 </div>
 
                 <button
-                  type="submit"
                   className="submit-button"
+                  type="submit"
                   style={{
                     backgroundColor: '#b5e2fa',
                     color: '#1d3557'
@@ -1419,7 +1493,7 @@ function App() {
 
         )}
 
-      </div>
+      </main>
     </>
   );
 }
