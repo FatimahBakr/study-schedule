@@ -238,7 +238,7 @@ function App() {
                     </button>
                   ) : (
                     <div style={{ textAlign: 'center', color: '#2e7d32', fontWeight: 'bold', padding: '6px', backgroundColor: '#ded', borderRadius: '10px', fontSize: '14px' }}>
-                      تم سداد كافة الدفعات بالكامل 
+                      تم سداد كافة الدفعات بالكامل 🎉
                     </div>
                   )}
                 </div>
